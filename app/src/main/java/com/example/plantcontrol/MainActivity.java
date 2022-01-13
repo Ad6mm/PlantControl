@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Context context = getApplicationContext();
-                Toast toast =  Toast.makeText(context, "Item removed!", Toast.LENGTH_LONG);
+                Toast toast =  Toast.makeText(context, "Item removed!", Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
                 toast.show();
 
