@@ -35,7 +35,7 @@
         android:clickable="true"
         android:focusable="auto"
         android:text="Let's begin!"
-        app:cornerRadius="30px"
+        app:cornerRadius="25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameInput" />
