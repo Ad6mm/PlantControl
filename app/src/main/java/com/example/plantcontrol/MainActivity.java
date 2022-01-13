@@ -10,15 +10,17 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.plantcontrol.adapters.PlantsAdapter;
 import com.example.plantcontrol.data.Plant;
+import com.example.plantcontrol.data.Plants;
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,9 +29,10 @@ public class MainActivity extends AppCompatActivity {
 
     public static String SP_NAME = "SharedPrefs";
     public static String USER_NAME = "userName";
+    public static String PLANTS_DATA = "plantsDATA";
     SharedPreferences sharedPref;
 
-    private ArrayList<Plant> items;
+    private Plants plants;
     private PlantsAdapter adapter;
 
     ListView listView;
@@ -46,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         addPlantButton = findViewById(R.id.addPlantButton);
 
         sharedPref = getApplicationContext().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
-        String userName = sharedPref.getString("userName", null);
+        String userName = sharedPref.getString(USER_NAME, null);
 
         if (userName == null) {
             Intent welcomeViewIntent = new Intent(MainActivity.this, WelcomeActivity.class);
@@ -62,8 +65,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        items = new ArrayList<>();
-        adapter = new PlantsAdapter(this, items);
+        plants = new Plants();
+        getPlantsData();
+        adapter = new PlantsAdapter(this, plants.getPlants());
         listView.setAdapter(adapter);
         setUpListViewListener();
 
@@ -93,8 +97,9 @@ public class MainActivity extends AppCompatActivity {
                 toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
                 toast.show();
 
-                items.remove(position);
+                plants.remove(position);
                 adapter.notifyDataSetChanged();
+                savePlantsData();
                 return true;
             }
         });
@@ -103,5 +108,19 @@ public class MainActivity extends AppCompatActivity {
     private void addItem(View v) {
         Plant plant = new Plant("Kwiatek", true, 3, new Date());
         adapter.add(plant);
+        savePlantsData();
+    }
+
+    private void savePlantsData() {
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(PLANTS_DATA, new Gson().toJson(plants));
+        editor.commit();
+    }
+
+    private void getPlantsData() {
+        String data = sharedPref.getString(PLANTS_DATA, null);
+        if (data != null) {
+            plants = new Gson().fromJson(sharedPref.getString(PLANTS_DATA, null), Plants.class);
+        }
     }
 }
