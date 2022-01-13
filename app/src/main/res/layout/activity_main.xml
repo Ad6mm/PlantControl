@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/addPlantTextView"
+        android:id="@+id/welcomeUserTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -56,7 +56,7 @@
         app:layout_constraintBottom_toTopOf="@+id/addPlantButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addPlantTextView">
+        app:layout_constraintTop_toBottomOf="@+id/welcomeUserTextView">
 
         <ListView
             android:id="@+id/listView"

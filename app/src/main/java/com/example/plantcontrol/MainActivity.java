@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.plantcontrol.adapters.PlantsAdapter;
 import com.example.plantcontrol.data.Plant;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPref;
 
     private ArrayList<Plant> items;
-    private ArrayAdapter<Plant> itemsAdapter;
+    private PlantsAdapter adapter;
 
     ListView listView;
     Button addPlantButton;
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        userNameTextView = findViewById(R.id.welcomeTextView);
+        userNameTextView = findViewById(R.id.welcomeUserTextView);
         listView = findViewById(R.id.listView);
         addPlantButton = findViewById(R.id.addPlantButton);
 
@@ -62,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         items = new ArrayList<>();
-        itemsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
-        listView.setAdapter(itemsAdapter);
+        adapter = new PlantsAdapter(this, items);
+        listView.setAdapter(adapter);
         setUpListViewListener();
 
 
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 toast.show();
 
                 items.remove(position);
-                itemsAdapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
                 return true;
             }
         });
@@ -101,6 +102,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void addItem(View v) {
         Plant plant = new Plant("Kwiatek", true, 3, new Date());
-        itemsAdapter.add(plant);
+        adapter.add(plant);
     }
 }
