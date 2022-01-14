@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -60,6 +61,8 @@ public class AddPlantActivity extends AppCompatActivity {
     EditText description;
     DatePicker plantDatePicker;
     DatePicker wateringDatePicker;
+    ImageView sun;
+    ImageView home;
 
 
     @Override
@@ -82,6 +85,8 @@ public class AddPlantActivity extends AppCompatActivity {
         plantDatePicker = findViewById(R.id.datePickerPlant);
         wateringDatePicker = findViewById(R.id.datePickerWatering);
         cancelButton = findViewById(R.id.cancelNewPlantView);
+        sun = findViewById(R.id.sun);
+        home = findViewById(R.id.home);
 
         Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
@@ -126,6 +131,19 @@ public class AddPlantActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        isIndoor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    home.setVisibility(View.VISIBLE);
+                    sun.setVisibility(View.INVISIBLE);
+                } else {
+                    sun.setVisibility(View.VISIBLE);
+                    home.setVisibility(View.INVISIBLE);
+                }
             }
         });
 
