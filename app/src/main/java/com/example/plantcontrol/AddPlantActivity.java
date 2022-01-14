@@ -224,7 +224,11 @@ public class AddPlantActivity extends AppCompatActivity {
 
         if (plantName.getText().toString() != "" && Integer.valueOf(wateringInterval.getText().toString()) > 0 && !plantDate.after(currentDateObject) && !wateringDate.after(currentDateObject)) {
             newPlant.setName(plantName.getText().toString());
-            newPlant.setWateringInterval(99);
+            newPlant.setWateringInterval(Integer.valueOf(wateringInterval.getText().toString()));
+            newPlant.setPlantDate(plantDate);
+            newPlant.setDescription(description.getText().toString());
+            newPlant.setLastWateringDate(wateringDate);
+            newPlant.setInside(isIndoor.isChecked());
             return true;
         } else {
             Context context = getApplicationContext();
