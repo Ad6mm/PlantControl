@@ -84,6 +84,8 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Plant name"
+        android:textAlignment="center"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/divider4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -96,8 +98,10 @@
         android:layout_height="2dp"
         android:layout_marginTop="4dp"
         android:background="?android:attr/listDivider"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        tools:layout_editor_absoluteX="1dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <View
         android:id="@+id/divider5"
@@ -116,6 +120,7 @@
         android:text="In plant indoor?"
         android:textAlignment="center"
         android:textSize="18sp"
+        android:textStyle="bold"
         android:thumbTint="#006400"
         android:trackTint="#006400"
         app:layout_constraintBottom_toTopOf="@+id/divider5"
@@ -147,6 +152,7 @@
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/divider5"
         app:layout_constraintEnd_toStartOf="@+id/wateringIntervalValue"
         app:layout_constraintTop_toBottomOf="@+id/divider4" />
@@ -157,8 +163,10 @@
         android:layout_height="2dp"
         android:layout_marginTop="80dp"
         android:background="?android:attr/listDivider"
-        app:layout_constraintTop_toBottomOf="@+id/divider5"
-        tools:layout_editor_absoluteX="1dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider5" />
 
     <TextView
         android:id="@+id/plantDate"
@@ -196,6 +204,7 @@
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider5" />
 
@@ -209,6 +218,7 @@
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider5" />
 
@@ -221,6 +231,7 @@
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
