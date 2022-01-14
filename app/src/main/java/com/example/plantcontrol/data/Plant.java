@@ -1,24 +1,21 @@
 package com.example.plantcontrol.data;
 
-import android.net.Uri;
-
+import java.net.URL;
 import java.util.Date;
 
 public class Plant {
     String name;
-    String customName = null;
     Boolean isInside;
-    Uri imageUri = null;
+    String imageStorageKey = null;
     Integer wateringInterval;
     Date plantDate = null;
     Date lastWateringDate;
     String description = null;
 
-    public Plant(String name, String customName, Boolean isInside, Uri imageUri, Integer wateringInterval, Date plantDate, Date lastWateringDate, String description) {
+    public Plant(String name, Boolean isInside, String imageStorageKey, Integer wateringInterval, Date plantDate, Date lastWateringDate, String description) {
         this.name = name;
-        this.customName = customName;
         this.isInside = isInside;
-        this.imageUri = imageUri;
+        this.imageStorageKey = imageStorageKey;
         this.wateringInterval = wateringInterval;
         this.plantDate = plantDate;
         this.lastWateringDate = lastWateringDate;
@@ -32,20 +29,24 @@ public class Plant {
         this.lastWateringDate = lastWateringDate;
     }
 
+    public Plant() {
+        this.name = null;
+        this.isInside = null;
+        this.wateringInterval = null;
+        this.lastWateringDate = null;
+    }
+
     public String getName() {
         return name;
     }
 
-    public String getCustomName() {
-        return customName;
-    }
 
     public Boolean getInside() {
         return isInside;
     }
 
-    public Uri getImageUri() {
-        return imageUri;
+    public String getImageStorageKey() {
+        return imageStorageKey;
     }
 
     public Integer getWateringInterval() {
@@ -68,16 +69,12 @@ public class Plant {
         this.name = name;
     }
 
-    public void setCustomName(String customName) {
-        this.customName = customName;
-    }
-
     public void setInside(Boolean inside) {
         isInside = inside;
     }
 
-    public void setImageUri(Uri imageUri) {
-        this.imageUri = imageUri;
+    public void setImageStorageKey(String imageStorageKey) {
+        this.imageStorageKey = imageStorageKey;
     }
 
     public void setWateringInterval(Integer wateringInterval) {

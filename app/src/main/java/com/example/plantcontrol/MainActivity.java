@@ -60,30 +60,21 @@ public class MainActivity extends AppCompatActivity {
         addPlantButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addItem(v);
+                Intent addPlantViewIntent = new Intent(MainActivity.this, AddPlantActivity.class);
+                startActivity(addPlantViewIntent);
             }
         });
 
-        plants = databaseConn.getPlantsData();
+        if (databaseConn.getPlantsData() != null) {
+            plants = databaseConn.getPlantsData();
+        } else {
+            plants = new Plants();
+            databaseConn.savePlantsData(plants);
+        }
+
         adapter = new PlantsAdapter(this, plants.getPlants());
         listView.setAdapter(adapter);
         setUpListViewListener();
-
-
-
-     /*   Button resetButton = null;
-        resetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sharedPref = getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.clear();
-                editor.commit();
-
-                Intent welcomeViewIntent = new Intent(MainActivity.this, WelcomeActivity.class);
-                startActivity(welcomeViewIntent);
-            }
-        });*/
     }
 
     private void setUpListViewListener() {
@@ -91,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Context context = getApplicationContext();
-                Toast toast =  Toast.makeText(context, "Item removed!", Toast.LENGTH_SHORT);
+                Toast toast =  Toast.makeText(context, "Item removed", Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
                 toast.show();
 
@@ -101,13 +92,5 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-    }
-
-    private void addItem(View v) {
-        //Plant plant = new Plant("Kwiatek", true, 3, new Date());
-        //adapter.add(plant);
-        Intent addPlantViewIntent = new Intent(MainActivity.this, AddPlantActivity.class);
-        startActivity(addPlantViewIntent);
-        //savePlantsData();
     }
 }

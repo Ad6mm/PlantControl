@@ -53,4 +53,10 @@ public class DatabaseConn {
         plants.add(plant);
         savePlantsData(plants);
     }
+
+    public void clearDatabase() {
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.clear();
+        editor.commit();
+    }
 }
