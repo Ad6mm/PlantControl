@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.plantcontrol.adapters.PlantsAdapter;
+import com.example.plantcontrol.data.DatabaseConn;
 import com.example.plantcontrol.data.Plant;
 import com.example.plantcontrol.data.Plants;
 import com.google.gson.Gson;
@@ -27,9 +28,6 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static String SP_NAME = "SharedPrefs";
-    public static String USER_NAME = "userName";
-    public static String PLANTS_DATA = "plantsDATA";
     SharedPreferences sharedPref;
 
     private Plants plants;
@@ -38,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     ListView listView;
     Button addPlantButton;
     TextView userNameTextView;
+    DatabaseConn databaseConn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
         addPlantButton = findViewById(R.id.addPlantButton);
 
-        sharedPref = getApplicationContext().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
-        String userName = sharedPref.getString(USER_NAME, null);
+        databaseConn = new DatabaseConn(getApplicationContext());
+        String userName = databaseConn.getUserName();
 
         if (userName == null) {
             Intent welcomeViewIntent = new Intent(MainActivity.this, WelcomeActivity.class);
@@ -65,8 +64,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        plants = new Plants();
-        getPlantsData();
+        plants = databaseConn.getPlantsData();
         adapter = new PlantsAdapter(this, plants.getPlants());
         listView.setAdapter(adapter);
         setUpListViewListener();
@@ -99,28 +97,17 @@ public class MainActivity extends AppCompatActivity {
 
                 plants.remove(position);
                 adapter.notifyDataSetChanged();
-                savePlantsData();
+                databaseConn.savePlantsData(plants);
                 return true;
             }
         });
     }
 
     private void addItem(View v) {
-        Plant plant = new Plant("Kwiatek", true, 3, new Date());
-        adapter.add(plant);
-        savePlantsData();
-    }
-
-    private void savePlantsData() {
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(PLANTS_DATA, new Gson().toJson(plants));
-        editor.commit();
-    }
-
-    private void getPlantsData() {
-        String data = sharedPref.getString(PLANTS_DATA, null);
-        if (data != null) {
-            plants = new Gson().fromJson(sharedPref.getString(PLANTS_DATA, null), Plants.class);
-        }
+        //Plant plant = new Plant("Kwiatek", true, 3, new Date());
+        //adapter.add(plant);
+        Intent addPlantViewIntent = new Intent(MainActivity.this, AddPlantActivity.class);
+        startActivity(addPlantViewIntent);
+        //savePlantsData();
     }
 }

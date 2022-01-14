@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.plantcontrol.data.DatabaseConn;
+
 public class WelcomeActivity extends AppCompatActivity {
 
     @Override
@@ -21,7 +23,6 @@ public class WelcomeActivity extends AppCompatActivity {
         Button button = findViewById(R.id.button);
         EditText nameInput = findViewById(R.id.nameInput);
         TextView emptyName = findViewById(R.id.emptyName);
-        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(MainActivity.SP_NAME, Context.MODE_PRIVATE);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -29,9 +30,8 @@ public class WelcomeActivity extends AppCompatActivity {
                 if (nameInput.getText().toString().equals("")) {
                     emptyName.setVisibility(View.VISIBLE);
                 } else {
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putString(MainActivity.USER_NAME, nameInput.getText().toString());
-                    editor.commit();
+                    DatabaseConn databaseConn = new DatabaseConn(getApplicationContext());
+                    databaseConn.setUserName(nameInput.getText().toString());
                     Intent mainViewIntent = new Intent(WelcomeActivity.this, MainActivity.class);
                     startActivity(mainViewIntent);
                 }
