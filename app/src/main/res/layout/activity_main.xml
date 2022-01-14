@@ -28,8 +28,8 @@
 
     <Button
         android:id="@+id/addPlantButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="280dp"
+        android:layout_height="60dp"
         android:backgroundTint="#006400"
         android:text="Add new plant"
         app:cornerRadius="25dp"
