@@ -27,53 +27,81 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/loginButton"
         android:layout_width="203dp"
         android:layout_height="55dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="#006400"
         android:clickable="true"
         android:focusable="auto"
-        android:text="Let's begin!"
+        android:text="Login"
         app:cornerRadius="25dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.485"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameInput" />
+        app:layout_constraintTop_toBottomOf="@+id/passwordInput" />
+
+    <Button
+        android:id="@+id/register"
+        android:layout_width="203dp"
+        android:layout_height="55dp"
+        android:backgroundTint="#006400"
+        android:clickable="true"
+        android:focusable="auto"
+        android:text="Register"
+        app:cornerRadius="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/forgotPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/forgotPassword"
+        android:layout_width="203dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="#006400"
+        android:clickable="true"
+        android:focusable="auto"
+        android:text="Forgot password?"
+        app:cornerRadius="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
-        android:id="@+id/nameInput"
+        android:id="@+id/emailInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Email"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/welcomeTextView"
+        app:srcCompat="@mipmap/default_plant" />
+
+    <EditText
+        android:id="@+id/passwordInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="textPassword"
+        android:text="Password"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="128dp"
-        android:text="What is your name?"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/welcomeTextView" />
-
-    <TextView
-        android:id="@+id/emptyName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="You must enter your name!"
-        android:textColor="#006400"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintTop_toBottomOf="@+id/emailInput" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

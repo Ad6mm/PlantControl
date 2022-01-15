@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         addPlantButton = findViewById(R.id.addPlantButton);
 
         databaseConn = new DatabaseConn(getApplicationContext());
+        databaseConn.clearDatabase();
         String userName = databaseConn.getUserName();
 
         if (userName == null) {
