@@ -2,6 +2,10 @@ package com.example.plantcontrol;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +23,7 @@ import com.example.plantcontrol.adapters.PlantsAdapter;
 import com.example.plantcontrol.data.DatabaseConn;
 import com.example.plantcontrol.data.Plant;
 import com.example.plantcontrol.data.Plants;
+import com.example.plantcontrol.notifications.ReminderBroadcast;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -65,8 +70,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        cancelNotification();
         if (databaseConn.getPlantsData() != null) {
             plants = databaseConn.getPlantsData();
+            long nextWateringTimeInMS = plants.getNextWateringTimeInMS();
+            if (nextWateringTimeInMS != 0) createNotification(nextWateringTimeInMS);
         } else {
             plants = new Plants();
             databaseConn.savePlantsData(plants);
@@ -82,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Context context = getApplicationContext();
-                Toast toast =  Toast.makeText(context, "Item removed", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(context, "Item removed", Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
                 toast.show();
 
@@ -92,5 +100,37 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private void createNotification(long timeInMs) {
+        //retrofit HTTP
+        //open wheater
+        createNotificationChannel();
+        Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeInMs, pendingIntent);
+
+    }
+
+    private void cancelNotification() {
+        createNotificationChannel();
+        Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+    }
+
+    private void createNotificationChannel() {
+        String channelName = "notificationChannel";
+        String description = "Channel for watering notifications";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel("notifyWatering", channelName, importance);
+        channel.setDescription(description);
+
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
     }
 }
