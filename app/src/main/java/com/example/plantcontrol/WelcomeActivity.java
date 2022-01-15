@@ -2,7 +2,9 @@ package com.example.plantcontrol;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,10 +32,10 @@ public class WelcomeActivity extends AppCompatActivity {
                 } else if (passwordInput.getText().toString().equals("")) {
                     passwordInput.setError("Password cannot by empty!");
                 } else {
-                    DatabaseConn databaseConn = new DatabaseConn(getApplicationContext());
+                   /* DatabaseConn databaseConn = new DatabaseConn(getApplicationContext());
                     databaseConn.setUserName(emailInput.getText().toString());
                     Intent mainViewIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-                    startActivity(mainViewIntent);
+                    startActivity(mainViewIntent); */
                 }
             }
         });
@@ -41,7 +43,12 @@ public class WelcomeActivity extends AppCompatActivity {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(WelcomeActivity.this, RegisterUser.class));
+                Bundle b = ActivityOptions.makeSceneTransitionAnimation(WelcomeActivity.this).toBundle();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    startActivity(new Intent(WelcomeActivity.this, RegisterUser.class), b);
+                } else {
+                    startActivity(new Intent(WelcomeActivity.this, RegisterUser.class));
+                }
             }
         });
     }

@@ -3,7 +3,9 @@ package com.example.plantcontrol;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.Gravity;
@@ -53,7 +55,12 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.cancelRegister:
-                startActivity(new Intent(this, WelcomeActivity.class));
+                Bundle b = ActivityOptions.makeSceneTransitionAnimation(RegisterUser.this).toBundle();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    startActivity(new Intent(this, WelcomeActivity.class), b);
+                } else {
+                    startActivity(new Intent(this, WelcomeActivity.class));
+                }
                 break;
             case R.id.registerApply:
                 registerUser();

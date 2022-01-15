@@ -6,7 +6,7 @@ public class User {
     public Plants plants;
 
     public User() {
-
+        this.plants = new Plants();
     }
 
     public User(String name, String email) {
