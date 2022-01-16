@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        createNotificationChannel();
         cancelNotification();
         firebaseDatabase.getReference().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -141,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createNotification(long timeInMs) {
-        createNotificationChannel();
         Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
 
@@ -151,9 +151,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cancelNotification() {
-        createNotificationChannel();
         Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
