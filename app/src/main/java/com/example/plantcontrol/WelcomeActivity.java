@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -15,13 +17,16 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.plantcontrol.data.DatabaseConn;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class WelcomeActivity extends AppCompatActivity {
+
+    public static String SP_NAME = "SharedPrefs";
+    public static String USER_ID = "userId";
+    private SharedPreferences sharedPref;
 
     private FirebaseAuth mAuth;
     private ProgressBar progressBar;
@@ -32,6 +37,13 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome2);
+
+        sharedPref = getApplicationContext().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
+        if (sharedPref.getString(USER_ID, null) != null) {
+            startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+            return;
+        }
+
 
         Button button = findViewById(R.id.loginButton);
         email = findViewById(R.id.emailInput);
@@ -101,6 +113,10 @@ public class WelcomeActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             progressBar.setVisibility(View.GONE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString(USER_ID, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            editor.commit();
+
                             Bundle b = ActivityOptions.makeSceneTransitionAnimation(WelcomeActivity.this).toBundle();
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                 startActivity(new Intent(WelcomeActivity.this, MainActivity.class), b);

@@ -22,7 +22,7 @@ public class DatabaseConn {
 
     public DatabaseConn(Context context) {
         this.context = context;
-        this.sharedPref = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);;
+        this.sharedPref = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
     }
 
     public String getUserName() {
