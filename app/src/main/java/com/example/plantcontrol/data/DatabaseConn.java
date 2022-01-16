@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.example.plantcontrol.MainActivity;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.gson.Gson;
 
 public class DatabaseConn {

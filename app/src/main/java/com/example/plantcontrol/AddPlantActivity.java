@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.plantcontrol.data.DatabaseConn;
+import com.example.plantcontrol.data.FirebaseDatabase;
 import com.example.plantcontrol.data.Plant;
 import com.example.plantcontrol.data.Plants;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -45,7 +46,8 @@ public class AddPlantActivity extends AppCompatActivity {
     String storageKey;
     String currentDate;
     Plant newPlant = new Plant();
-    DatabaseConn databaseConn;
+    //DatabaseConn databaseConn;
+    FirebaseDatabase firebaseDatabase;
     FirebaseStorage storage;
     StorageReference storageReference;
 
@@ -70,7 +72,8 @@ public class AddPlantActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_plant);
 
-        databaseConn = new DatabaseConn(getApplicationContext());
+        //databaseConn = new DatabaseConn(getApplicationContext());
+        firebaseDatabase = new FirebaseDatabase(getApplicationContext());
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
@@ -152,7 +155,8 @@ public class AddPlantActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     if (verifyNewPlant()) {
-                        databaseConn.addSinglePlant(newPlant);
+                        //databaseConn.addSinglePlant(newPlant);
+                        firebaseDatabase.addSinglePlant(newPlant);
                         Intent mainViewIntent = new Intent(AddPlantActivity.this, MainActivity.class);
                         startActivity(mainViewIntent);
                     }

@@ -6,12 +6,16 @@ public class User {
     public Plants plants;
 
     public User() {
-        this.plants = new Plants();
     }
 
     public User(String name, String email) {
         this.name = name;
         this.email = email;
-        this.plants = new Plants();
+    }
+
+    public User(String name, String email, Plants plants) {
+        this.name = name;
+        this.email = email;
+        this.plants = plants;
     }
 }

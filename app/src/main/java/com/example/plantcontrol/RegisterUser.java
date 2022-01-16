@@ -121,7 +121,12 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
                                         toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
                                         toast.show();
                                         progressBar.setVisibility(View.GONE);
-
+                                        Bundle b = ActivityOptions.makeSceneTransitionAnimation(RegisterUser.this).toBundle();
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                            startActivity(new Intent(getApplicationContext(), WelcomeActivity.class), b);
+                                        } else {
+                                            startActivity(new Intent(getApplicationContext(), WelcomeActivity.class));
+                                        }
                                     } else {
                                         Toast toast = Toast.makeText(RegisterUser.this, "Failed to register!", Toast.LENGTH_LONG);
                                         toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
