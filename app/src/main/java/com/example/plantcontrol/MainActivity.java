@@ -97,19 +97,22 @@ public class MainActivity extends AppCompatActivity {
             plants = firebaseDatabase.getPlantsData();
             long nextWateringInMS = plants.getNextWateringInMS();
             if (nextWateringInMS != 0) createNotification(nextWateringInMS);
+
+            progressBar.setVisibility(View.GONE);
+            adapter = new PlantsAdapter(this, plants.getPlants());
+            listView.setAdapter(adapter);
+            setUpListViewListener();
         } else {
             plants = new Plants();
             savePlantsToDatabase(plants);
         }
-
-        progressBar.setVisibility(View.GONE);
-        adapter = new PlantsAdapter(this, plants.getPlants());
-        listView.setAdapter(adapter);
-        setUpListViewListener();
     }
 
     private void savePlantsToDatabase(Plants plants) {
-        firebaseDatabase.getReference().child("Plants").setValue(plants)
+        User tmpUser = firebaseDatabase.getUser();
+        tmpUser.plants = plants;
+
+        firebaseDatabase.getReference().setValue(tmpUser)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -130,8 +133,8 @@ public class MainActivity extends AppCompatActivity {
                 toast.show();
 
                 plants.remove(position);
-                adapter.notifyDataSetChanged();
                 savePlantsToDatabase(plants);
+                adapter.notifyDataSetChanged();
                 return true;
             }
         });
