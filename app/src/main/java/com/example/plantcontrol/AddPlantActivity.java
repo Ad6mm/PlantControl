@@ -140,7 +140,7 @@ public class AddPlantActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(AddPlantActivity.this, MainActivity.class));
+                AddPlantActivity.super.onBackPressed();
             }
         });
 
