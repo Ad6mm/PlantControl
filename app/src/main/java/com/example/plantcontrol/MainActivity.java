@@ -3,19 +3,21 @@ package com.example.plantcontrol;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,8 @@ import com.example.plantcontrol.data.FirebaseDatabase;
 import com.example.plantcontrol.data.Plants;
 import com.example.plantcontrol.data.User;
 import com.example.plantcontrol.notifications.ReminderBroadcast;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -33,12 +37,11 @@ public class MainActivity extends AppCompatActivity {
     private Plants plants;
     private PlantsAdapter adapter;
 
-    User user;
-
     ListView listView;
     Button addPlantButton;
     TextView userNameTextView;
-    //DatabaseConn databaseConn;
+    ProgressBar progressBar;
+
     FirebaseDatabase firebaseDatabase;
 
     @Override
@@ -47,13 +50,32 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         firebaseDatabase = new FirebaseDatabase(getApplicationContext());
+
+        userNameTextView = findViewById(R.id.welcomeUserTextView);
+        listView = findViewById(R.id.listView);
+        addPlantButton = findViewById(R.id.addPlantButton);
+        progressBar = findViewById(R.id.progressBarMain);
+        progressBar.setVisibility(View.VISIBLE);
+
+        addPlantButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle b = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    startActivity(new Intent(MainActivity.this, AddPlantActivity.class), b);
+                } else {
+                    startActivity(new Intent(MainActivity.this, AddPlantActivity.class));
+                }
+            }
+        });
+
+        cancelNotification();
         firebaseDatabase.getReference().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User tmpUser = snapshot.getValue(User.class);
 
                 if (tmpUser != null) {
-                    user = tmpUser;
                     firebaseDatabase.setUser(tmpUser);
                     initializeView();
                 }
@@ -61,50 +83,41 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                progressBar.setVisibility(View.GONE);
                 Toast.makeText(getApplicationContext(), "Something wrong happened!", Toast.LENGTH_LONG).show();
             }
         });
-        //databaseConn = new DatabaseConn(getApplicationContext());
-        //databaseConn.clearDatabase();
-        //String userName = databaseConn.getUserName();
     }
 
     private void initializeView() {
-        userNameTextView = findViewById(R.id.welcomeUserTextView);
-        listView = findViewById(R.id.listView);
-        addPlantButton = findViewById(R.id.addPlantButton);
-
-        String userName = user.name;//firebaseDatabase.getUserName();
-        Log.d("DEBUG===========", "onCreate: " + userName);
-
+        String userName = firebaseDatabase.getUserName();
         userNameTextView.setText(userNameTextView.getText().toString() + " " + userName + "!");
 
-        addPlantButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent addPlantViewIntent = new Intent(MainActivity.this, AddPlantActivity.class);
-                startActivity(addPlantViewIntent);
-            }
-        });
-
-        cancelNotification();
-        //if (databaseConn.getPlantsData() != null) {
-        //if (firebaseDatabase.getPlantsData() != null) {
-        if (user.plants != null) {
-            //plants = databaseConn.getPlantsData();
-            //plants = firebaseDatabase.getPlantsData();
-            plants = user.plants;
-            long nextWateringTimeInMS = plants.getNextWateringTimeInMS();
-            if (nextWateringTimeInMS != 0) createNotification(nextWateringTimeInMS);
+        if (firebaseDatabase.getPlantsData() != null) {
+            plants = firebaseDatabase.getPlantsData();
+            long nextWateringInMS = plants.getNextWateringInMS();
+            if (nextWateringInMS != 0) createNotification(nextWateringInMS);
         } else {
             plants = new Plants();
-            //databaseConn.savePlantsData(plants);
-            firebaseDatabase.savePlantsData(plants);
+            savePlantsToDatabase(plants);
         }
 
+        progressBar.setVisibility(View.GONE);
         adapter = new PlantsAdapter(this, plants.getPlants());
         listView.setAdapter(adapter);
         setUpListViewListener();
+    }
+
+    private void savePlantsToDatabase(Plants plants) {
+        firebaseDatabase.getReference().child("Plants").setValue(plants)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(getApplicationContext(), "Something wrong happened!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 
     private void setUpListViewListener() {
@@ -118,16 +131,13 @@ public class MainActivity extends AppCompatActivity {
 
                 plants.remove(position);
                 adapter.notifyDataSetChanged();
-                //databaseConn.savePlantsData(plants);
-                firebaseDatabase.savePlantsData(plants);
+                savePlantsToDatabase(plants);
                 return true;
             }
         });
     }
 
     private void createNotification(long timeInMs) {
-        //retrofit HTTP
-        //open wheater
         createNotificationChannel();
         Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);

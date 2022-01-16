@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -25,9 +27,15 @@ import com.example.plantcontrol.data.DatabaseConn;
 import com.example.plantcontrol.data.FirebaseDatabase;
 import com.example.plantcontrol.data.Plant;
 import com.example.plantcontrol.data.Plants;
+import com.example.plantcontrol.data.User;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.SingleDateSelector;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -72,7 +80,6 @@ public class AddPlantActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_plant);
 
-        //databaseConn = new DatabaseConn(getApplicationContext());
         firebaseDatabase = new FirebaseDatabase(getApplicationContext());
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
@@ -133,7 +140,7 @@ public class AddPlantActivity extends AppCompatActivity {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                startActivity(new Intent(AddPlantActivity.this, MainActivity.class));
             }
         });
 
@@ -155,10 +162,42 @@ public class AddPlantActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     if (verifyNewPlant()) {
-                        //databaseConn.addSinglePlant(newPlant);
-                        firebaseDatabase.addSinglePlant(newPlant);
-                        Intent mainViewIntent = new Intent(AddPlantActivity.this, MainActivity.class);
-                        startActivity(mainViewIntent);
+                        firebaseDatabase.getReference().addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                User tmpUser = snapshot.getValue(User.class);
+
+                                if (tmpUser != null) {
+                                    firebaseDatabase.setUser(tmpUser);
+
+                                    Plants updatedPlants = firebaseDatabase.getPlantsData();
+                                    updatedPlants.add(newPlant);
+                                    firebaseDatabase.setPlantsData(updatedPlants);
+
+                                    firebaseDatabase.getReference().setValue(firebaseDatabase.getUser())
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Bundle b = ActivityOptions.makeSceneTransitionAnimation(AddPlantActivity.this).toBundle();
+                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                                            startActivity(new Intent(AddPlantActivity.this, MainActivity.class), b);
+                                                        } else {
+                                                            startActivity(new Intent(AddPlantActivity.this, MainActivity.class));
+                                                        }
+                                                    } else {
+                                                        Toast.makeText(getApplicationContext(), "Something wrong happened!", Toast.LENGTH_LONG).show();
+                                                    }
+                                                }
+                                            });
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(getApplicationContext(), "Something wrong happened!", Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
                 } catch (MalformedURLException | ParseException e) {
                     e.printStackTrace();

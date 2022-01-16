@@ -108,6 +108,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                 startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
                             }
                         } else {
+                            progressBar.setVisibility(View.GONE);
                             Toast toast = Toast.makeText(WelcomeActivity.this, "Failed to login, please check you credentials!", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
                             toast.show();

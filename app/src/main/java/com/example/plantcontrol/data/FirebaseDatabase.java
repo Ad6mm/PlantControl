@@ -32,11 +32,9 @@ public class FirebaseDatabase {
     private Context context;
 
     public FirebaseDatabase(Context context) {
-        user = new User();
-
         databaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        reference = com.google.firebase.database.FirebaseDatabase.getInstance().getReference("Users");
         userID = databaseUser.getUid();
+        reference = com.google.firebase.database.FirebaseDatabase.getInstance().getReference("Users").child(userID);
         this.context = context;
     }
 
@@ -51,43 +49,20 @@ public class FirebaseDatabase {
         this.user = user;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     public String getEmail() {
         return user.email;
     }
 
     public Plants getPlantsData() { return user.plants; }
 
+    public void setPlantsData(Plants plants) {  this.user.plants = plants; }
+
     public boolean logout() {
         FirebaseAuth.getInstance().signOut();
         return true;
     }
-
-    public void savePlantsData(Plants plants) {
-        User updatedUser = new User(user.name, user.email, plants);
-        reference.child(userID).setValue(updatedUser)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(context, "Something wrong happened!", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-    }
-
-    public void addSinglePlant(Plant plant) {
-        Plants updatedPlants = user.plants;
-        updatedPlants.add(plant);
-        User updatedUser = new User(user.name, user.email, updatedPlants);
-        reference.child(userID).setValue(updatedUser)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(context, "Something wrong happened!", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-    }
-
 }

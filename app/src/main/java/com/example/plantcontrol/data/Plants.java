@@ -13,7 +13,7 @@ public class Plants {
     }
 
     public Plants() {
-        this.plants = new ArrayList<Plant>();
+        this.plants = new ArrayList<>();
     }
 
     public void setPlants(ArrayList<Plant> plants) {
@@ -32,7 +32,7 @@ public class Plants {
         plants.add(plant);
     }
 
-    public long getNextWateringTimeInMS() {
+    public long getNextWateringInMS() {
         AtomicLong minTime = new AtomicLong(-1);
         AtomicLong tempTime = new AtomicLong();
         plants.forEach(plant -> {

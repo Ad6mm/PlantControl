@@ -6,11 +6,13 @@ public class User {
     public Plants plants;
 
     public User() {
+        plants = new Plants();
     }
 
     public User(String name, String email) {
         this.name = name;
         this.email = email;
+        plants = new Plants();
     }
 
     public User(String name, String email, Plants plants) {
