@@ -180,11 +180,7 @@ public class AddPlantActivity extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
                                                         Bundle b = ActivityOptions.makeSceneTransitionAnimation(AddPlantActivity.this).toBundle();
-                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                                            startActivity(new Intent(AddPlantActivity.this, MainActivity.class), b);
-                                                        } else {
-                                                            startActivity(new Intent(AddPlantActivity.this, MainActivity.class));
-                                                        }
+                                                        startActivity(new Intent(AddPlantActivity.this, MainActivity.class));
                                                     } else {
                                                         Toast.makeText(getApplicationContext(), "Something wrong happened!", Toast.LENGTH_LONG).show();
                                                     }
