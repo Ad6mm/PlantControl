@@ -72,7 +72,7 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:src="@mipmap/default_plant"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider2" />
@@ -96,7 +96,7 @@
         android:id="@+id/divider4"
         android:layout_width="409dp"
         android:layout_height="2dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="16dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -276,7 +276,8 @@
         app:layout_constraintBottom_toTopOf="@+id/divider5"
         app:layout_constraintStart_toEndOf="@+id/isIndoorSwitch"
         app:layout_constraintTop_toBottomOf="@+id/divider4"
-        app:srcCompat="@drawable/outline_wb_sunny_24" />
+        app:srcCompat="@drawable/outline_wb_sunny_24"
+        app:tint="#FFC107" />
 
     <DatePicker
         android:id="@+id/datePickerPlant"
@@ -302,5 +303,17 @@
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBarAddPlant"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:indeterminateTint="#006400"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="@+id/imageView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

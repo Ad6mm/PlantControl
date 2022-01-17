@@ -61,11 +61,13 @@ public class PlantsAdapter extends ArrayAdapter<Plant> {
         TextView plantName = (TextView) convertView.findViewById(R.id.textPlantNameView);
         TextView daysToWater = (TextView) convertView.findViewById(R.id.daysToWateringTextView);
         ImageView image = (ImageView) convertView.findViewById(R.id.imagePlantView);
+        ImageView needWaterImage = (ImageView) convertView.findViewById(R.id.needWaterImage) ;
         ProgressBar progressBar = convertView.findViewById(R.id.progressBar2);
 
         plantName.setText(plant.getName());
         int daysToWatering = calculateDaysToWatering(plant);
         if (daysToWatering == 0) {
+            needWaterImage.setVisibility(View.VISIBLE);
             daysToWater.setTextColor(Color.RED);
         }
         daysToWater.setText(String.valueOf(daysToWatering));

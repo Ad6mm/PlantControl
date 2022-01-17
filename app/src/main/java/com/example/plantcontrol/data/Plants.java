@@ -32,6 +32,10 @@ public class Plants {
         plants.add(plant);
     }
 
+    public void updatePlant(int position, Plant plant) {
+        plants.get(position).setPlant(plant);
+    }
+
     public long getNextWateringInMS() {
         AtomicLong minTime = new AtomicLong(-1);
         AtomicLong tempTime = new AtomicLong();

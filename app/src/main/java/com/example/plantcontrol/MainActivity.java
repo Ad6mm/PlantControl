@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.plantcontrol.adapters.PlantsAdapter;
 import com.example.plantcontrol.data.FirebaseDatabase;
+import com.example.plantcontrol.data.Plant;
 import com.example.plantcontrol.data.Plants;
 import com.example.plantcontrol.data.User;
 import com.example.plantcontrol.notifications.ReminderBroadcast;
@@ -32,6 +33,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -148,15 +154,58 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Context context = getApplicationContext();
-                Toast toast = Toast.makeText(context, "Item removed", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
-                toast.show();
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+                Calendar c = Calendar.getInstance();
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+                String currentDate = year + "-" + String.valueOf(month+1) + "-" + day;
+                try {
+                    Date currentDateObject = format.parse(currentDate);
+                    Plant tmpPlant = plants.getPlants().get(position);
+                    tmpPlant.setLastWateringDate(currentDateObject);
+                    plants.updatePlant(position, tmpPlant);
 
-                plants.remove(position);
-                savePlantsToDatabase(plants);
-                adapter.notifyDataSetChanged();
-                return true;
+
+                    firebaseDatabase.setPlantsData(plants);
+                    firebaseDatabase.getReference().setValue(firebaseDatabase.getUser())
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast toast =  Toast.makeText(getApplicationContext(), "Plant has been watered", Toast.LENGTH_SHORT);
+                                        toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
+                                        toast.show();
+                                        adapter.notifyDataSetChanged();
+                                        Bundle b = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle();
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                            startActivity(new Intent(MainActivity.this, MainActivity.class), b);
+                                        } else {
+                                            startActivity(new Intent(MainActivity.this, MainActivity.class));
+                                        }
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Something wrong happened!", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                    return true;
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Bundle b = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    startActivity(new Intent(MainActivity.this, PlantDetailsActivity.class).putExtra("Plant", position), b);
+                } else {
+                    startActivity(new Intent(MainActivity.this, PlantDetailsActivity.class));
+                }
             }
         });
     }

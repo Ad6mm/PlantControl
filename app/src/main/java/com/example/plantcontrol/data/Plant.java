@@ -40,6 +40,16 @@ public class Plant {
         return name;
     }
 
+    public void setPlant(Plant plant) {
+        this.name = plant.name;
+        this.isInside = plant.isInside;
+        this.imageStorageKey = plant.imageStorageKey;
+        this.wateringInterval = plant.wateringInterval;
+        this.plantDate = plant.plantDate;
+        this.lastWateringDate = plant.lastWateringDate;
+        this.description = plant.description;
+    }
+
 
     public Boolean getInside() {
         return isInside;

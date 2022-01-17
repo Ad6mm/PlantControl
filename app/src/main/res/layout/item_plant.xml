@@ -81,4 +81,15 @@
         app:layout_constraintStart_toStartOf="@+id/imagePlantView"
         tools:layout_editor_absoluteY="26dp" />
 
+    <ImageView
+        android:id="@+id/needWaterImage"
+        android:layout_width="120dp"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imagePlantView"
+        app:layout_constraintStart_toStartOf="@+id/imagePlantView"
+        app:layout_constraintTop_toTopOf="@+id/imagePlantView"
+        app:srcCompat="@drawable/ic_no_water" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
