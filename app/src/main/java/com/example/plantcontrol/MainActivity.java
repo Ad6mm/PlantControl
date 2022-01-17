@@ -16,6 +16,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -41,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     Button addPlantButton;
     TextView userNameTextView;
     ProgressBar progressBar;
+    ImageView emptyPlant;
+    ImageView settings;
 
     FirebaseDatabase firebaseDatabase;
 
@@ -56,6 +59,20 @@ public class MainActivity extends AppCompatActivity {
         addPlantButton = findViewById(R.id.addPlantButton);
         progressBar = findViewById(R.id.progressBarMain);
         progressBar.setVisibility(View.VISIBLE);
+        emptyPlant = findViewById(R.id.emptyPlant);
+        settings = findViewById(R.id.settings);
+
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle b = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    startActivity(new Intent(MainActivity.this, SettingsActivity.class), b);
+                } else {
+                    startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                }
+            }
+        });
 
         addPlantButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,7 +111,8 @@ public class MainActivity extends AppCompatActivity {
         String userName = firebaseDatabase.getUserName();
         userNameTextView.setText(userNameTextView.getText().toString() + " " + userName + "!");
 
-        if (firebaseDatabase.getPlantsData() != null) {
+        if (!firebaseDatabase.getPlantsData().getPlants().isEmpty()) {
+            emptyPlant.setVisibility(View.GONE);
             plants = firebaseDatabase.getPlantsData();
             long nextWateringInMS = plants.getNextWateringInMS();
             if (nextWateringInMS != 0) createNotification(nextWateringInMS);
@@ -104,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
             listView.setAdapter(adapter);
             setUpListViewListener();
         } else {
+            emptyPlant.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
             plants = new Plants();
             savePlantsToDatabase(plants);
         }

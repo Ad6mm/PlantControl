@@ -54,7 +54,6 @@ public class AddPlantActivity extends AppCompatActivity {
     String storageKey;
     String currentDate;
     Plant newPlant = new Plant();
-    //DatabaseConn databaseConn;
     FirebaseDatabase firebaseDatabase;
     FirebaseStorage storage;
     StorageReference storageReference;
@@ -179,7 +178,6 @@ public class AddPlantActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
-                                                        Bundle b = ActivityOptions.makeSceneTransitionAnimation(AddPlantActivity.this).toBundle();
                                                         startActivity(new Intent(AddPlantActivity.this, MainActivity.class));
                                                     } else {
                                                         Toast.makeText(getApplicationContext(), "Something wrong happened!", Toast.LENGTH_LONG).show();

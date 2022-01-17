@@ -42,9 +42,12 @@ public class WelcomeActivity extends AppCompatActivity {
         if (sharedPref.getString(USER_ID, null) != null) {
             startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
             return;
+        } else {
+            displayActivity();
         }
+    }
 
-
+    private void displayActivity() {
         Button button = findViewById(R.id.loginButton);
         email = findViewById(R.id.emailInput);
         password = findViewById(R.id.passwordInput);
@@ -57,10 +60,6 @@ public class WelcomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 userLogin();
-               /* DatabaseConn databaseConn = new DatabaseConn(getApplicationContext());
-                databaseConn.setUserName(emailInput.getText().toString());
-                Intent mainViewIntent = new Intent(WelcomeActivity.this, MainActivity.class);
-                startActivity(mainViewIntent); */
             }
         });
 
