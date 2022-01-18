@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.content.DialogInterface;
 
@@ -20,13 +21,17 @@ import com.example.plantcontrol.data.Plants;
 import com.example.plantcontrol.data.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    Button returnButton, logout, clearData;
+    public static String CITY_NAME = "cityName";
+    Button returnButton, logout, clearData, saveCity;
+    TextView cityName;
+
     FirebaseDatabase firebaseDatabase;
     private SharedPreferences sharedPref;
 
@@ -38,8 +43,23 @@ public class SettingsActivity extends AppCompatActivity {
         returnButton = findViewById(R.id.settingsReturn);
         logout = findViewById(R.id.logout);
         clearData = findViewById(R.id.clearAppData);
+        cityName = findViewById(R.id.cityNameTextView);
+        saveCity = findViewById(R.id.saveCity);
 
+        sharedPref = getApplicationContext().getSharedPreferences(WelcomeActivity.SP_NAME, Context.MODE_PRIVATE);
         firebaseDatabase = new FirebaseDatabase(getApplicationContext());
+
+        if (sharedPref.getString(CITY_NAME, null) != null) {
+            cityName.setText(sharedPref.getString(CITY_NAME, null));
+        }
+
+        saveCity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sharedPref.edit().putString(CITY_NAME, cityName.getText().toString()).commit();
+                startActivity(new Intent(SettingsActivity.this, WelcomeActivity.class));
+            }
+        });
 
         clearData.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +127,6 @@ public class SettingsActivity extends AppCompatActivity {
                 builder.setMessage("Are you sure?");
                 builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        sharedPref = getApplicationContext().getSharedPreferences(WelcomeActivity.SP_NAME, Context.MODE_PRIVATE);
                         firebaseDatabase.logout();
                         sharedPref.edit().clear().commit();
                         Bundle b = ActivityOptions.makeSceneTransitionAnimation(SettingsActivity.this).toBundle();

@@ -1,8 +1,10 @@
 package com.example.plantcontrol;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.app.ActivityOptions;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
@@ -10,6 +12,16 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -22,6 +34,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.example.plantcontrol.adapters.PlantsAdapter;
 import com.example.plantcontrol.data.FirebaseDatabase;
 import com.example.plantcontrol.data.Plant;
@@ -29,15 +55,24 @@ import com.example.plantcontrol.data.Plants;
 import com.example.plantcontrol.data.User;
 import com.example.plantcontrol.notifications.ReminderBroadcast;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,9 +84,10 @@ public class MainActivity extends AppCompatActivity {
     TextView userNameTextView;
     ProgressBar progressBar;
     ImageView emptyPlant;
-    ImageView settings;
+    ImageView settings, weather;
 
     FirebaseDatabase firebaseDatabase;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         firebaseDatabase = new FirebaseDatabase(getApplicationContext());
+        sharedPref = getApplicationContext().getSharedPreferences(WelcomeActivity.SP_NAME, Context.MODE_PRIVATE);
 
         userNameTextView = findViewById(R.id.welcomeUserTextView);
         listView = findViewById(R.id.listView);
@@ -67,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         emptyPlant = findViewById(R.id.emptyPlant);
         settings = findViewById(R.id.settings);
+        weather = findViewById(R.id.weatherIcon);
 
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
         createNotificationChannel();
         cancelNotification();
+        getWeather();
         firebaseDatabase.getReference().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -236,5 +275,73 @@ public class MainActivity extends AppCompatActivity {
 
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(channel);
+    }
+
+
+    private void getWeather() {
+        String cityName = sharedPref.getString(SettingsActivity.CITY_NAME, null);
+
+        if (cityName != null && cityName != "") {
+            RequestQueue queue = Volley.newRequestQueue(this);
+            String url ="https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=fc1003b10bc286bef51c5b40c09e511d";
+
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                Uri uri;
+                                String imageURL;
+                                JSONObject jsonObject = new JSONObject(response);
+                                int weatherCode = jsonObject.getJSONArray("weather").getJSONObject(0).getInt("id");
+                                if (weatherCode >= 200 && weatherCode <=232) {
+                                    imageURL = "https://openweathermap.org/img/wn/11d@2x.png";
+                                } else if (weatherCode >= 300 && weatherCode <= 531) {
+                                    imageURL = "https://openweathermap.org/img/wn/09d@2x.png";
+                                } else if (weatherCode >= 600 && weatherCode <= 622) {
+                                    imageURL = "https://openweathermap.org/img/wn/13d@2x.png";
+                                } else if (weatherCode >= 700 && weatherCode <= 781) {
+                                    imageURL = "https://openweathermap.org/img/wn/50d@2x.png";
+                                } else if (weatherCode == 800) {
+                                    imageURL = "https://openweathermap.org/img/wn/01d@2x.png";
+                                } else {
+                                    imageURL = "https://openweathermap.org/img/wn/03d@2x.png";
+                                }
+
+                                uri = Uri.parse(imageURL);
+                                RequestOptions requestOptions = new RequestOptions();
+                                requestOptions = requestOptions.transforms(new CenterCrop(), new RoundedCorners(90));
+                                Glide.with(MainActivity.this)
+                                        .load(uri)
+                                        .apply(requestOptions)
+                                        .listener(new RequestListener<Drawable>() {
+                                            @Override
+                                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+
+                                                return false;
+                                            }
+
+                                            @Override
+                                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+
+                                                return false;
+                                            }
+                                        })
+                                        .into(weather);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast toast =  Toast.makeText(getApplicationContext(), "Something went wrong or city name is incorrect!", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
+                    toast.show();
+                }
+            });
+// Add the request to the RequestQueue.
+            queue.add(stringRequest);
+        }
     }
 }
