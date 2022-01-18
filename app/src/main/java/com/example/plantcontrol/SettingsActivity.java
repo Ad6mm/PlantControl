@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.content.DialogInterface;
 
 import com.example.plantcontrol.data.FirebaseDatabase;
 import com.example.plantcontrol.data.Plants;
@@ -43,59 +44,90 @@ public class SettingsActivity extends AppCompatActivity {
         clearData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseDatabase.getReference().addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        User tmpUser = snapshot.getValue(User.class);
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+                builder.setTitle("Delete all data");
+                builder.setMessage("Are you sure?");
+                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
 
-                        if (tmpUser != null) {
-                            firebaseDatabase.setUser(tmpUser);
+                        firebaseDatabase.getReference().addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                User tmpUser = snapshot.getValue(User.class);
 
-                            Plants clearPlants = new Plants();
-                            firebaseDatabase.setPlantsData(clearPlants);
+                                if (tmpUser != null) {
+                                    firebaseDatabase.setUser(tmpUser);
 
-                            firebaseDatabase.getReference().setValue(firebaseDatabase.getUser())
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                Bundle b = ActivityOptions.makeSceneTransitionAnimation(SettingsActivity.this).toBundle();
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                                    startActivity(new Intent(SettingsActivity.this, MainActivity.class), b);
-                                                } else {
-                                                    startActivity(new Intent(SettingsActivity.this, MainActivity.class));
+                                    Plants clearPlants = new Plants();
+                                    firebaseDatabase.setPlantsData(clearPlants);
+
+                                    firebaseDatabase.getReference().setValue(firebaseDatabase.getUser())
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Bundle b = ActivityOptions.makeSceneTransitionAnimation(SettingsActivity.this).toBundle();
+                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                                            startActivity(new Intent(SettingsActivity.this, MainActivity.class), b);
+                                                        } else {
+                                                            startActivity(new Intent(SettingsActivity.this, MainActivity.class));
+                                                        }
+                                                    } else {
+                                                        Toast.makeText(getApplicationContext(), "Something wrong happened!", Toast.LENGTH_LONG).show();
+                                                    }
                                                 }
-                                            } else {
-                                                Toast.makeText(getApplicationContext(), "Something wrong happened!", Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-                                    });
-                        }
-                    }
+                                            });
+                                }
+                            }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Something wrong happened!", Toast.LENGTH_LONG).show();
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(getApplicationContext(), "Something wrong happened!", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        dialog.dismiss();
                     }
                 });
+                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
             }
         });
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sharedPref = getApplicationContext().getSharedPreferences(WelcomeActivity.SP_NAME, Context.MODE_PRIVATE);
-                firebaseDatabase.logout();
-                sharedPref.edit().clear().commit();
-                Bundle b = ActivityOptions.makeSceneTransitionAnimation(SettingsActivity.this).toBundle();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    startActivity(new Intent(SettingsActivity.this, WelcomeActivity.class), b);
-                } else {
-                    startActivity(new Intent(SettingsActivity.this, WelcomeActivity.class));
-                }
-            }
-        });
-
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+                builder.setTitle("Log out");
+                builder.setMessage("Are you sure?");
+                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        sharedPref = getApplicationContext().getSharedPreferences(WelcomeActivity.SP_NAME, Context.MODE_PRIVATE);
+                        firebaseDatabase.logout();
+                        sharedPref.edit().clear().commit();
+                        Bundle b = ActivityOptions.makeSceneTransitionAnimation(SettingsActivity.this).toBundle();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            startActivity(new Intent(SettingsActivity.this, WelcomeActivity.class), b);
+                        } else {
+                            startActivity(new Intent(SettingsActivity.this, WelcomeActivity.class));
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }});
         returnButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

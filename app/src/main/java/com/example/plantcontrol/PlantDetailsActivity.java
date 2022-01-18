@@ -78,7 +78,7 @@ public class PlantDetailsActivity extends AppCompatActivity {
     Boolean isEditing;
     String greenColor = "#006400";
     String blueColor = "#2196F3";
-    String yellowColor = "#FFC107";
+    String redColor = 	"#F44336";
     Uri imageUri = null;
     int plantPosition;
 
@@ -402,8 +402,7 @@ public class PlantDetailsActivity extends AppCompatActivity {
                             firebaseDatabase.setUser(tmpUser);
 
                             Plants updatedPlants = firebaseDatabase.getPlantsData();
-                            updatedPlants.remove(plantPosition);
-                            updatedPlants.add(plant);
+                            updatedPlants.updatePlant(plantPosition, plant);
                             firebaseDatabase.setPlantsData(updatedPlants);
 
                             firebaseDatabase.getReference().setValue(firebaseDatabase.getUser())
@@ -445,6 +444,8 @@ public class PlantDetailsActivity extends AppCompatActivity {
     }
 
     private void disableEdit() {
+        delete.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        delete.setVisibility(View.GONE);
         disableTextView(plantName);
         disableTextView(wateringInterval);
         wateringInterval.setTextColor(Color.parseColor(blueColor));
@@ -458,7 +459,7 @@ public class PlantDetailsActivity extends AppCompatActivity {
     }
 
     private void enableEdit() {
-        delete.setVisibility(View.GONE);
+        delete.setColorFilter(Color.parseColor(redColor), PorterDuff.Mode.MULTIPLY);
         enableTextView(plantName);
         enableTextView(wateringInterval);
         wateringInterval.setTextColor(Color.parseColor(blueColor));
