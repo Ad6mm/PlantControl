@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (cityName != null && cityName != "") {
             RequestQueue queue = Volley.newRequestQueue(this);
-            String url ="https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=fc1003b10bc286bef51c5b40c09e511d";
+            String url ="https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=[openweather_key_to_put]";
 
             StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                     new Response.Listener<String>() {
